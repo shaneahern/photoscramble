@@ -12,6 +12,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -21,6 +22,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.Toast;
+
+import java.io.IOException;
 
 /**
  * Main activity for puzzle. Implements listeners for the sensor module (to detect device "shake" action),
@@ -208,22 +211,17 @@ public class PuzzleActivity extends Activity implements OnTouchListener, SensorE
 	    switch(requestCode) { 
 	    case ACTIVITY_SELECT_IMAGE:
 	    	// Handle activty result for gallery image selection 
-	        if(resultCode == RESULT_OK){  
-	        	
-	        	// query media store for image file path and orientation for the selected image
-	        	String[] filePathColumn = {MediaStore.Images.Media.DATA, MediaStore.Images.ImageColumns.ORIENTATION};
-	    		Cursor cursor = getContentResolver().query(returnedIntent.getData(), filePathColumn, null, null, null);
-	    		if (cursor != null) {
-	    			cursor.moveToFirst();
-	    		
-		    		int dataColumnIndex = cursor.getColumnIndex(filePathColumn[0]);
-		    		String filePath = cursor.getString(dataColumnIndex);
-		    		int orientation = cursor.getInt(1);
-		    		cursor.close();
-		    		
-		    		// get a bitmap for the selected image, scale, re-orient, and crop to square
-		            useImageFileInPuzzle(getBitmapFromPath(filePath, orientation));
-	    		} else {
+	        if(resultCode == RESULT_OK){
+
+                Uri imageUri = returnedIntent.getData();
+                Bitmap bitmap = null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                    useImageFileInPuzzle(resizeAndCropSquare(bitmap));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (bitmap == null) {
 	    			// in some cases, no image is returned, if for example an image is selected from a Picassa album where the image is not stored locally
 	    			Toast.makeText(this, R.string.load_photo_error, Toast.LENGTH_LONG).show();
 	    		}
@@ -257,6 +255,7 @@ public class PuzzleActivity extends Activity implements OnTouchListener, SensorE
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		// down-sample large images
 		opts.inSampleSize = 4;
+
 		Bitmap imageBitmap = BitmapFactory.decodeFile(filePath, opts);
 				
 		// rotate according to orientation stored for image in media store, if needed
