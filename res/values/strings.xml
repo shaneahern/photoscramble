@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Puzzle</string>
+    <string name="reset_puzzle">Reset puzzle</string>
+    <string name="use_gallery_image">Use gallery image</string>
+    <string name="use_camera_image">Use camera image</string>
+    <string name="shake_to_scramble">Shake phone to scramble the puzzle!</string>
+    <string name="congratulations">Congratulations!</string>
+    <string name="puzzle_solved_message">You solved the puzzle in %1$d moves!</string>
+    <string name="ok">OK</string>  
+    <string name="load_photo_error">Oops! Unable to load image, sorry about that!.</string>  
+    <color name="gray">#696969</color>
+</resources>
