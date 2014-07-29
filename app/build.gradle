@@ -1,0 +1,22 @@
+apply plugin: 'android'
+
+android {
+    compileSdkVersion 15
+    buildToolsVersion "19.1.0"
+
+    defaultConfig {
+        applicationId "com.shaneahern.puzzle"
+        minSdkVersion 15
+        targetSdkVersion 15
+
+        testApplicationId "com.shaneahern.puzzle.test"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+    }
+
+    buildTypes {
+        release {
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
